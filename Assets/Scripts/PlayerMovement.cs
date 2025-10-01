@@ -2,64 +2,184 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private Camera camerap;
-    private new Rigidbody2D rigidBody;
-
-    private float inputAxis;
-    public float moveSpeed = 8f;
+    [Header("Movement")]
+    [SerializeField] private float moveSpeed = 8f;
 
     [Header("Jump")]
-    public float jumpForce = 12f;
-    [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private float jumpForce = 12f;
+    [SerializeField] private float coyoteTime = 0.1f;
+    [SerializeField] private float jumpBufferTime = 0.1f;
+    [SerializeField] private float jumpCutMultiplier = 0.5f;
+    [SerializeField] private int extraJumps = 1; // numero di salti extra (1 = doppio salto)
+
+    [Header("Wall Slide / Wall Jump")]
+    [SerializeField] private float wallSlideSpeed = -2f;
+    [SerializeField] private float wallJumpForce = 12f;
+    [SerializeField] private float wallJumpPush = 8f;
+    [SerializeField] private float wallJumpDuration = 0.2f;
+    [SerializeField] private Transform wallCheckLeft;
+    [SerializeField] private Transform wallCheckRight;
+    [SerializeField] private float wallCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundLayer;
 
+    [Header("Ground Check")]
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundCheckRadius = 0.2f;
+
+    private Rigidbody2D rb;
+    private Camera cam;
+
+    private float moveInput;
+    private bool jumpPressed;
+    private bool jumpReleased;
     private bool isGrounded;
-    private bool jumpQueued;   // memorizza la pressione spazio fino al FixedUpdate
+    private bool isTouchingWall;
+    private bool isWallJumping;
+
+    private float coyoteCounter;
+    private float jumpBufferCounter;
+    private float wallJumpTimer;
+
+    private int jumpsRemaining;
 
     private void Awake()
     {
-        rigidBody = GetComponent<Rigidbody2D>();
-        camerap = Camera.main;
+        rb = GetComponent<Rigidbody2D>();
+        cam = Camera.main;
+    }
+
+    private void Start()
+    {
+        jumpsRemaining = extraJumps + 1; // salto base + extra
     }
 
     private void Update()
     {
-        // Input orizzontale
-        inputAxis = Input.GetAxisRaw("Horizontal");
-
-        // Richiesta di salto (la eseguo in FixedUpdate)
-        if (Input.GetKeyDown(KeyCode.Space))
-            jumpQueued = true;
+        HandleInput();
     }
 
     private void FixedUpdate()
     {
-        // 1) Ground check
-        if (groundCheck != null)
-            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+        CheckGround();
+        CheckWalls();
 
-        // 2) Movimento orizzontale via velocità (niente MovePosition!)
-        var v = rigidBody.linearVelocity;
-        v.x = inputAxis * moveSpeed;
-        rigidBody.linearVelocity = v;
+        if (!isWallJumping) ApplyMovement();
 
-        // 3) Salto
-        if (jumpQueued && isGrounded)
+        ApplyJump();
+        ApplyWallSlide();
+        ApplyWallJump();
+        ClampToCamera();
+    }
+
+    // ------------------------------
+    // FUNZIONI SEPARATE
+    // ------------------------------
+
+    private void HandleInput()
+    {
+        moveInput = Input.GetAxisRaw("Horizontal");
+
+        if (Input.GetButtonDown("Jump")) jumpPressed = true;
+        if (Input.GetButtonUp("Jump")) jumpReleased = true;
+    }
+
+    private void CheckGround()
+    {
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+        if (isGrounded)
         {
-            v = rigidBody.linearVelocity;
-            v.y = jumpForce;                 // spinta verso l’alto
-            rigidBody.linearVelocity = v;
+            coyoteCounter = coyoteTime;
+            jumpsRemaining = extraJumps; // reset salti quando tocchi terra
         }
-        jumpQueued = false;
+        else
+        {
+            coyoteCounter -= Time.fixedDeltaTime;
+        }
 
-        // 4) Clamp ai bordi della camera (solo X) senza toccare la Y
-        Vector2 leftEdge = camerap.ScreenToWorldPoint(Vector2.zero);
-        Vector2 rightEdge = camerap.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
+        if (jumpPressed)
+        {
+            jumpBufferCounter = jumpBufferTime;
+            jumpPressed = false;
+        }
+        else
+        {
+            jumpBufferCounter -= Time.fixedDeltaTime;
+        }
+    }
+
+    private void CheckWalls()
+    {
+        bool leftWall = Physics2D.OverlapCircle(wallCheckLeft.position, wallCheckRadius, groundLayer);
+        bool rightWall = Physics2D.OverlapCircle(wallCheckRight.position, wallCheckRadius, groundLayer);
+        isTouchingWall = (leftWall || rightWall);
+    }
+
+    private void ApplyMovement()
+    {
+        Vector2 v = rb.linearVelocity;
+        v.x = moveInput * moveSpeed;
+        rb.linearVelocity = v;
+    }
+
+    private void ApplyJump()
+    {
+        // Salto da terra (con coyote time e jump buffer)
+        if (jumpBufferCounter > 0 && (coyoteCounter > 0 || jumpsRemaining > 0))
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            jumpBufferCounter = 0;
+
+            // se non sei a terra, consumi un salto
+            if (!isGrounded) jumpsRemaining--;
+        }
+
+        // Jump cut
+        if (jumpReleased && rb.linearVelocity.y > 0)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
+        }
+        jumpReleased = false;
+    }
+
+    private void ApplyWallSlide()
+    {
+        if (!isGrounded && isTouchingWall && rb.linearVelocity.y < wallSlideSpeed)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, wallSlideSpeed);
+        }
+    }
+
+    private void ApplyWallJump()
+    {
+        if (jumpBufferCounter > 0 && isTouchingWall && !isGrounded)
+        {
+            float direction = wallCheckLeft && Physics2D.OverlapCircle(wallCheckLeft.position, wallCheckRadius, groundLayer) ? 1 : -1;
+
+            rb.linearVelocity = new Vector2(direction * wallJumpPush, wallJumpForce);
+
+            isWallJumping = true;
+            wallJumpTimer = wallJumpDuration;
+            jumpBufferCounter = 0;
+        }
+
+        if (isWallJumping)
+        {
+            wallJumpTimer -= Time.fixedDeltaTime;
+            if (wallJumpTimer <= 0) isWallJumping = false;
+        }
+    }
+
+    private void ClampToCamera()
+    {
+        Vector2 leftEdge = cam.ScreenToWorldPoint(Vector2.zero);
+        Vector2 rightEdge = cam.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
         float minX = leftEdge.x + 0.5f;
         float maxX = rightEdge.x - 0.5f;
 
-        if (rigidBody.position.x < minX || rigidBody.position.x > maxX)
-            rigidBody.position = new Vector2(Mathf.Clamp(rigidBody.position.x, minX, maxX), rigidBody.position.y);
+        if (rb.position.x < minX || rb.position.x > maxX)
+        {
+            rb.position = new Vector2(Mathf.Clamp(rb.position.x, minX, maxX), rb.position.y);
+        }
     }
 }
