@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 637583071324484237}
   - component: {fileID: 3883806263696796894}
-  - component: {fileID: 8448197058587512582}
+  - component: {fileID: 8220638683301081714}
   - component: {fileID: 5721264952923725386}
   m_Layer: 0
   m_Name: Mario
@@ -64,8 +64,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!70 &8448197058587512582
-CapsuleCollider2D:
+--- !u!61 &8220638683301081714
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -99,8 +99,17 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0.65}
-  m_Size: {x: 0.7, y: 1.01}
-  m_Direction: 0
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.78, y: 1.04}
+  m_EdgeRadius: 0
 --- !u!114 &5721264952923725386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,11 +124,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 8
   jumpForce: 12
-  groundCheck: {fileID: 3108985662431416008}
-  groundCheckRadius: 0.2
+  coyoteTime: 0.1
+  jumpBufferTime: 0.1
+  jumpCutMultiplier: 0.5
+  extraJumps: 1
+  wallSlideSpeed: -2
+  wallJumpForce: 12
+  wallJumpPush: 8
+  wallJumpDuration: 0.2
+  wallCheckLeft: {fileID: 0}
+  wallCheckRight: {fileID: 0}
+  wallCheckRadius: 0.2
   groundLayer:
     serializedVersion: 2
     m_Bits: 1
+  groundCheck: {fileID: 3108985662431416008}
+  groundCheckRadius: 0.2
 --- !u!1 &4428668871987919780
 GameObject:
   m_ObjectHideFlags: 0

@@ -691,67 +691,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2244425189177140040, guid: e49aca4895be32440974d372db4d1101, type: 3}
   m_PrefabInstance: {fileID: 220854591}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &234374510
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 4.2452474
-      objectReference: {fileID: 0}
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.1511202
-      objectReference: {fileID: 0}
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.09259133
-      objectReference: {fileID: 0}
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2734981008111092865, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7263196737044440374, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: m_Name
-      value: breakParticles
-      objectReference: {fileID: 0}
-    - target: {fileID: 8888388331503704720, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
-      propertyPath: looping
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 4445013866db2cd4d88364e93a19dc78, type: 3}
 --- !u!1001 &253765789
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8343,13 +8282,29 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
+      propertyPath: coyoteTime
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
+      propertyPath: wallJumpPush
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
       propertyPath: wallCheckLeft
       value: 
       objectReference: {fileID: 1193038184}
     - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
+      propertyPath: wallJumpForce
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
       propertyPath: wallCheckRight
       value: 
       objectReference: {fileID: 63061706}
+    - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
+      propertyPath: wallSlideSpeed
+      value: -4
+      objectReference: {fileID: 0}
     - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
       propertyPath: groundLayer.m_Bits
       value: 64
@@ -8373,4 +8328,3 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 126072962}
   - {fileID: 4200832584656030918}
-  - {fileID: 234374510}
