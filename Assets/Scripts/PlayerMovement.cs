@@ -1,9 +1,18 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 8f;
+
+    [Header("Dash")]
+    [SerializeField] private float dashSpeed = 15f;
+    [SerializeField] private float dashTime = 2f;
+    [SerializeField] private float dashCoolDown = 3f;
+
+
 
     [Header("Jump")]
     [SerializeField] private float jumpForce = 12f;
@@ -36,6 +45,11 @@ public class PlayerMovement : MonoBehaviour
     private bool isTouchingWall;
     private bool isWallJumping;
 
+    private float originalGravityScale;
+
+    private bool canDash = true;
+    private bool isDashing = false;
+
     private float coyoteCounter;
     private float jumpBufferCounter;
     private float wallJumpTimer;
@@ -45,6 +59,8 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        originalGravityScale = rb.gravityScale;
         cam = Camera.main;
     }
 
@@ -63,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
         CheckGround();
         CheckWalls();
 
-        if (!isWallJumping) ApplyMovement();
+        if (!isWallJumping && !isDashing) ApplyMovement();
 
         ApplyJump();
         ApplyWallSlide();
@@ -81,6 +97,43 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetButtonDown("Jump")) jumpPressed = true;
         if (Input.GetButtonUp("Jump")) jumpReleased = true;
+
+        if (Input.GetKeyDown(KeyCode.C) && canDash) {
+
+            StartCoroutine(Dash());
+
+        } 
+    }
+
+    IEnumerator Dash()
+    {
+
+        canDash = false;
+        isDashing = true;
+
+        Vector2 v = rb.linearVelocity;
+
+        v.x = dashSpeed;
+
+        v.y = 0f;
+
+        rb.gravityScale = 0;
+
+        rb.linearVelocity = v;
+
+        yield return new WaitForSeconds(dashTime);
+
+        isDashing = false;
+
+        rb.linearVelocity = Vector2.zero;
+
+        rb.gravityScale = originalGravityScale;
+
+        yield return new WaitForSeconds(dashCoolDown);
+
+        canDash = true;
+
+
     }
 
     private void CheckGround()

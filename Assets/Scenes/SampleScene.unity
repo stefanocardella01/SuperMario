@@ -9252,6 +9252,14 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
+      propertyPath: dashTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
+      propertyPath: dashSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
       propertyPath: jumpForce
       value: 18
       objectReference: {fileID: 0}
@@ -9262,6 +9270,10 @@ PrefabInstance:
     - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
       propertyPath: coyoteTime
       value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
+      propertyPath: dashCoolDown
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5721264952923725386, guid: 8ea0a9e7f1fbf1d4b9598f3fc1f86e6e, type: 3}
       propertyPath: wallJumpPush
